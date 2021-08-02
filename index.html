@@ -1,6 +1,5 @@
 <html>
 <script src='https://d3js.org/d3.v5.min.js'></script>
-<div id="my_dataviz"></div>
 <style> circle {fill: lightblue; stroke: black;} </style>
 <header> Narrative Visualization: Online Chess Openings by Rating</header>
 <body onload='init()'>
@@ -14,41 +13,82 @@
             <button type="button" onclick="location.href='index5.html'">Non E4 Openings</button>
         </p>
     </div>
-<svg width=600 height=600>
+    <div id="my_dataviz">
+<svg width=500 height=500>
 </svg>
 <script>
 async function init() {
 const data = await d3.csv("games.csv");
 
-var height = 500
+var height = 400
 var margin = 50
-var width = 500
+var width = 400
 
 x = d3.scaleLinear().domain([750,2750]).range([0,width]);
 y = d3.scaleLinear().domain([750,2750]).range([height,0]);
 
 // home scene
 
-d3.select("svg").append("g").attr("transform", "translate(" + margin + "," + margin + ")").selectAll().data(data).enter().append("circle")
+var svg = d3.select("svg")
+
+
+// add tooltip
+
+var tooltip = d3.select("#my_dataviz")
+    .append("div")
+    .style("opacity", 0)
+    .attr("class", "tooltip")
+    .style("background-color", "white")
+    .style("border", "solid")
+    .style("border-width", "10px")
+    .style("border-radius", "5px")
+    .style("padding", "10px")
+
+    var mouseover = function(d) {
+    tooltip
+      .style("opacity", 1)
+  }
+
+  var mousemove = function(d) {
+    tooltip
+      .html("Opening: " + d.opening_name + " won by " + d.winner)
+      .style("left", (d3.mouse(this)[0]+90) + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
+      .style("top", (d3.mouse(this)[1]) + "px")
+  }
+
+  // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
+  var mouseleave = function(d) {
+    // tooltip
+    //   .transition()
+    //   .duration(3000)
+    //   .style("opacity", 0)
+  } 
+
+
+svg.append("g").attr("transform", "translate(" + margin + "," + margin + ")").selectAll("dot").data(data).enter()
+.append("circle")
 .attr("cx", function(d,i) { return x(d.white_rating);})
 .attr("cy", function(d,i) { return y(d.black_rating);})
 .attr("r", function(d,i) { return parseInt(1) + 2;})
 .style("fill", function(d) { return color(d); })
+.on("mouseover", mouseover )
+.on("mousemove", mousemove )
+.on("mouseleave", mouseleave )
 
-d3.select("svg").append("g").attr("transform", "translate(" + margin + "," + margin + ")").call(d3.axisLeft(y).tickValues([1000,1500,2000,2500]))
+svg.append("g").attr("transform", "translate(" + margin + "," + margin + ")").call(d3.axisLeft(y).tickValues([1000,1500,2000,2500]))
 
-d3.select("svg").append("g").attr("transform", "translate(" + margin + "," + (margin + height) + ")").call(d3.axisBottom(x).tickValues([1000,1500,2000,2500]))
+svg.append("g").attr("transform", "translate(" + margin + "," + (margin + height) + ")").call(d3.axisBottom(x).tickValues([1000,1500,2000,2500]))
 
 d3.format("~s")
 
-d3.select("svg").append("text")
+svg.append("text")
     .attr("class", "x label")
     .attr("text-anchor", "end")
     .attr("x", width - 3.5*margin)
     .attr("y", height + 2*margin - 10)
     .text("white rating");
 
-d3.select("svg").append("text")
+svg.append("text")
     .attr("class", "y label")
     .attr("text-anchor", "end")
     .attr("y", 6)
@@ -56,19 +96,6 @@ d3.select("svg").append("text")
     .attr("dy", ".75em")
     .attr("transform", "rotate(-90)")
     .text("black rating");
-
-// create a tooltip
-var tooltip = d3.select("svg")
-  .append("div")
-    .style("position", "absolute")
-    .style("visibility", "hidden")
-    .text("I'm a circle!");
-
-//
-d3.select("svg")
-  .on("mouseover", function(){return tooltip.style("visibility", "visible");})
-  .on("mousemove", function(){return tooltip.style("top", (event.pageY-800)+"px").style("left",(event.pageX-800)+"px");})
-  .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
 
 
 function color(d) {
@@ -85,14 +112,6 @@ function color(d) {
 }
     return "gray"
 }
-
-// .style("fill-opacity", function(d) { return opacity(d); });
-// function opacity(d) {
-//     if (d.moves.startsWith("e4")) {
-//         return 0.9
-//     }
-//     return 0.5
-// }
 
 
 function isSicilian(d) {
@@ -137,5 +156,6 @@ function isDoubleQueenPawn(d) {
 
 }
 </script>
+</div>
 </body>
 </html>
