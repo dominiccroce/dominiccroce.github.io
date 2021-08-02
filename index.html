@@ -14,7 +14,7 @@
         </p>
     </div>
     <div id="my_dataviz">
-<svg width=500 height=500>
+<svg width=700 height=500>
 </svg>
 <script>
 async function init() {
@@ -22,14 +22,27 @@ const data = await d3.csv("games.csv");
 
 var height = 400
 var margin = 50
-var width = 400
+var width = 650
 
-x = d3.scaleLinear().domain([750,2750]).range([0,width]);
+x = d3.scaleLinear().domain([750,2750]).range([0,400]);
 y = d3.scaleLinear().domain([750,2750]).range([height,0]);
 
 // home scene
 
 var svg = d3.select("svg")
+
+
+svg.append("circle").attr("cx",490).attr("cy",130).attr("r", 6).style("fill", "blue")
+svg.append("circle").attr("cx",490).attr("cy",160).attr("r", 6).style("fill", "red")
+svg.append("circle").attr("cx",490).attr("cy",190).attr("r", 6).style("fill", "green")
+svg.append("circle").attr("cx",490).attr("cy",220).attr("r", 6).style("fill", "cyan")
+svg.append("circle").attr("cx",490).attr("cy",250).attr("r", 6).style("fill", "gray")
+
+svg.append("text").attr("x", 500).attr("y", 130).text("Double King Pawn").style("font-size", "15px").attr("alignment-baseline","middle")
+svg.append("text").attr("x", 500).attr("y", 160).text("Sicilian Defense").style("font-size", "15px").attr("alignment-baseline","middle")
+svg.append("text").attr("x", 500).attr("y", 190).text("French Defense").style("font-size", "15px").attr("alignment-baseline","middle")
+svg.append("text").attr("x", 500).attr("y", 220).text("Caro Kann Defense").style("font-size", "15px").attr("alignment-baseline","middle")
+svg.append("text").attr("x", 500).attr("y", 250).text("Non E4 Openings").style("font-size", "15px").attr("alignment-baseline","middle")
 
 
 // add tooltip
@@ -84,7 +97,7 @@ d3.format("~s")
 svg.append("text")
     .attr("class", "x label")
     .attr("text-anchor", "end")
-    .attr("x", width - 3.5*margin)
+    .attr("x", 290)
     .attr("y", height + 2*margin - 10)
     .text("white rating");
 
@@ -92,7 +105,7 @@ svg.append("text")
     .attr("class", "y label")
     .attr("text-anchor", "end")
     .attr("y", 6)
-    .attr("x", -260)
+    .attr("x", -210)
     .attr("dy", ".75em")
     .attr("transform", "rotate(-90)")
     .text("black rating");
