@@ -32,17 +32,11 @@ y = d3.scaleLinear().domain([750,2750]).range([height,0]);
 var svg = d3.select("svg")
 
 
-svg.append("circle").attr("cx",490).attr("cy",130).attr("r", 6).style("fill", "blue")
-svg.append("circle").attr("cx",490).attr("cy",160).attr("r", 6).style("fill", "red")
-svg.append("circle").attr("cx",490).attr("cy",190).attr("r", 6).style("fill", "green")
-svg.append("circle").attr("cx",490).attr("cy",220).attr("r", 6).style("fill", "cyan")
-svg.append("circle").attr("cx",490).attr("cy",250).attr("r", 6).style("fill", "gray")
+svg.append("circle").attr("cx",490).attr("cy",130).attr("r", 6).style("fill", "cyan")
+svg.append("circle").attr("cx",490).attr("cy",160).attr("r", 6).style("fill", "gray")
 
-svg.append("text").attr("x", 500).attr("y", 130).text("Double King Pawn").style("font-size", "15px").attr("alignment-baseline","middle")
-svg.append("text").attr("x", 500).attr("y", 160).text("Sicilian Defense").style("font-size", "15px").attr("alignment-baseline","middle")
-svg.append("text").attr("x", 500).attr("y", 190).text("French Defense").style("font-size", "15px").attr("alignment-baseline","middle")
-svg.append("text").attr("x", 500).attr("y", 220).text("Caro Kann Defense").style("font-size", "15px").attr("alignment-baseline","middle")
-svg.append("text").attr("x", 500).attr("y", 250).text("Non E4 Openings").style("font-size", "15px").attr("alignment-baseline","middle")
+svg.append("text").attr("x", 500).attr("y", 130).text("Caro Kann Defense").style("font-size", "15px").attr("alignment-baseline","middle")
+svg.append("text").attr("x", 500).attr("y", 160).text("All Other Openings").style("font-size", "15px").attr("alignment-baseline","middle")
 
 
 // add tooltip
@@ -112,17 +106,9 @@ svg.append("text")
 
 
 function color(d) {
-    if (d.moves.startsWith("e4")) {
-        if (isSicilian(d)) {
-            return "red"
-        } else if (isFrench(d)) {
-            return "green"
-        } else if (isDoubleKingPawn(d)) {
-            return "blue"
-        } else if (isCaroKann(d)) {
-            return "cyan"
+    if (isCaroKann(d)) {
+        return "cyan"
     }
-}
     return "gray"
 }
 

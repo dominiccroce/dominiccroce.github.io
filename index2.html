@@ -10,51 +10,96 @@
             <button type="button" onclick="location.href='index3.html'">Sicilian Defense</button>
             <button type="button" onclick="location.href='index4.html'">French Defense</button>
             <button type="button" onclick="location.href='index5.html'">Caro Kann Defense</button>
-            <button type="button" onclick="location.href='index5.html'">Non E4 Openings</button>
+            <button type="button" onclick="location.href='index6.html'">Non E4 Openings</button>
         </p>
     </div>
-<svg width=600 height=600>
+    <div id="my_dataviz">
+<svg width=700 height=500>
 </svg>
 <script>
 async function init() {
 const data = await d3.csv("games.csv");
 
-var height = 500
+var height = 400
 var margin = 50
-var width = 500
+var width = 650
 
-x = d3.scaleLinear().domain([750,2750]).range([0,width]);
+x = d3.scaleLinear().domain([750,2750]).range([0,400]);
 y = d3.scaleLinear().domain([750,2750]).range([height,0]);
 
 // home scene
 
-d3.select("svg").append("g").attr("transform", "translate(" + margin + "," + margin + ")").selectAll().data(data).enter().append("circle")
+var svg = d3.select("svg")
+
+
+svg.append("circle").attr("cx",490).attr("cy",130).attr("r", 6).style("fill", "blue")
+svg.append("circle").attr("cx",490).attr("cy",160).attr("r", 6).style("fill", "gray")
+
+svg.append("text").attr("x", 500).attr("y", 130).text("Double King Pawn").style("font-size", "15px").attr("alignment-baseline","middle")
+svg.append("text").attr("x", 500).attr("y", 160).text("All Other Openings").style("font-size", "15px").attr("alignment-baseline","middle")
+
+
+// add tooltip
+
+var tooltip = d3.select("#my_dataviz")
+    .append("div")
+    .style("opacity", 0)
+    .attr("class", "tooltip")
+    .style("background-color", "white")
+    .style("border", "solid")
+    .style("border-width", "10px")
+    .style("border-radius", "5px")
+    .style("padding", "10px")
+
+    var mouseover = function(d) {
+    tooltip
+      .style("opacity", 1)
+  }
+
+  var mousemove = function(d) {
+    tooltip
+      .html("Opening: " + d.opening_name + " won by " + d.winner)
+      .style("left", (d3.mouse(this)[0]+90) + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
+      .style("top", (d3.mouse(this)[1]) + "px")
+  }
+
+  // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
+  var mouseleave = function(d) {
+    // tooltip
+    //   .transition()
+    //   .duration(3000)
+    //   .style("opacity", 0)
+  } 
+
+
+svg.append("g").attr("transform", "translate(" + margin + "," + margin + ")").selectAll("dot").data(data).enter()
+.append("circle")
 .attr("cx", function(d,i) { return x(d.white_rating);})
 .attr("cy", function(d,i) { return y(d.black_rating);})
 .attr("r", function(d,i) { return parseInt(1) + 2;})
 .style("fill", function(d) { return color(d); })
-.style("fill-opacity", function(d) { return opacity(d); })
-.style("stroke-opacity", 0);
+.on("mouseover", mouseover )
+.on("mousemove", mousemove )
+.on("mouseleave", mouseleave )
 
+svg.append("g").attr("transform", "translate(" + margin + "," + margin + ")").call(d3.axisLeft(y).tickValues([1000,1500,2000,2500]))
 
-d3.select("svg").append("g").attr("transform", "translate(" + margin + "," + margin + ")").call(d3.axisLeft(y).tickValues([1000,1500,2000,2500]))
-
-d3.select("svg").append("g").attr("transform", "translate(" + margin + "," + (margin + height) + ")").call(d3.axisBottom(x).tickValues([1000,1500,2000,2500]))
+svg.append("g").attr("transform", "translate(" + margin + "," + (margin + height) + ")").call(d3.axisBottom(x).tickValues([1000,1500,2000,2500]))
 
 d3.format("~s")
 
-d3.select("svg").append("text")
+svg.append("text")
     .attr("class", "x label")
     .attr("text-anchor", "end")
-    .attr("x", width - 3.5*margin)
+    .attr("x", 290)
     .attr("y", height + 2*margin - 10)
     .text("white rating");
 
-d3.select("svg").append("text")
+svg.append("text")
     .attr("class", "y label")
     .attr("text-anchor", "end")
     .attr("y", 6)
-    .attr("x", -260)
+    .attr("x", -210)
     .attr("dy", ".75em")
     .attr("transform", "rotate(-90)")
     .text("black rating");
@@ -63,15 +108,8 @@ d3.select("svg").append("text")
 function color(d) {
     if (isDoubleKingPawn(d)) {
         return "blue"
-}
-    return "gray"
-}
-
-function opacity(d) {
-    if (color(d) != "gray") {
-        return 0.9
     }
-    return 0.5
+    return "gray"
 }
 
 
@@ -117,5 +155,6 @@ function isDoubleQueenPawn(d) {
 
 }
 </script>
+</div>
 </body>
 </html>
